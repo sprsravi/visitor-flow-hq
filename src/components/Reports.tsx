@@ -11,6 +11,14 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent 
+} from '@/components/ui/chart';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { BarChart3, Download, Calendar, TrendingUp, Users, Clock, Building2 } from 'lucide-react';
 import { Visitor } from '@/types/visitor';
 
@@ -115,6 +123,23 @@ const Reports = ({ visitors }: ReportsProps) => {
   const topCompanies = getTopCompanies();
   const avgDuration = getAverageVisitDuration();
 
+  const chartConfig = {
+    total: {
+      label: "Total Visitors",
+      color: "hsl(var(--primary))",
+    },
+    checkedIn: {
+      label: "Checked In",
+      color: "hsl(var(--success))",
+    },
+    checkedOut: {
+      label: "Checked Out",
+      color: "hsl(var(--muted-foreground))",
+    },
+  };
+
+  const CHART_COLORS = ['hsl(var(--primary))', 'hsl(var(--success))', 'hsl(var(--warning))', 'hsl(var(--destructive))', 'hsl(var(--muted-foreground))'];
+
   return (
     <div className="space-y-6">
       {/* Header with Date Range */}
@@ -182,7 +207,59 @@ const Reports = ({ visitors }: ReportsProps) => {
         </CardContent>
       </Card>
 
-      {/* Daily Statistics */}
+      {/* Daily Statistics Chart */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <BarChart3 className="h-5 w-5 text-primary" />
+              <span>Daily Visitor Trends</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig} className="h-[300px]">
+              <BarChart data={dailyStats}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="date" 
+                  tickFormatter={(value) => new Date(value).toLocaleDateString()}
+                />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartLegend content={<ChartLegendContent />} />
+                <Bar dataKey="total" fill="var(--color-total)" />
+                <Bar dataKey="checkedIn" fill="var(--color-checkedIn)" />
+                <Bar dataKey="checkedOut" fill="var(--color-checkedOut)" />
+              </BarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              <span>Visitor Flow Trend</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig} className="h-[300px]">
+              <LineChart data={dailyStats}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="date" 
+                  tickFormatter={(value) => new Date(value).toLocaleDateString()}
+                />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Line type="monotone" dataKey="total" stroke="var(--color-total)" strokeWidth={2} />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Daily Statistics Table */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -223,39 +300,72 @@ const Reports = ({ visitors }: ReportsProps) => {
       </Card>
 
       {/* Top Companies */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Building2 className="h-5 w-5 text-primary" />
-            <span>Top Visiting Companies</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Company</TableHead>
-                  <TableHead>Number of Visits</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {topCompanies.map((company, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{company.company}</TableCell>
-                    <TableCell>{company.count}</TableCell>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Building2 className="h-5 w-5 text-primary" />
+              <span>Company Distribution</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig} className="h-[300px]">
+              <PieChart>
+                <Pie
+                  data={topCompanies.slice(0, 5)}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ company, percent }) => `${company} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="count"
+                  nameKey="company"
+                >
+                  {topCompanies.slice(0, 5).map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                  ))}
+                </Pie>
+                <ChartTooltip content={<ChartTooltipContent />} />
+              </PieChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Building2 className="h-5 w-5 text-primary" />
+              <span>Top Visiting Companies</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Company</TableHead>
+                    <TableHead>Number of Visits</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            {topCompanies.length === 0 && (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">No company data available for the selected period.</p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {topCompanies.map((company, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium">{company.company}</TableCell>
+                      <TableCell>{company.count}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              {topCompanies.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No company data available for the selected period.</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
