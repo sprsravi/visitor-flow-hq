@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Users, ClipboardList, BarChart3, Menu, X } from 'lucide-react';
 import emudhra_logo from '@/assets/emudhra-logo.png';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface NavigationProps {
   activeTab: string;
@@ -28,7 +29,7 @@ const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-2">
+          <div className="hidden md:flex items-center space-x-2">
             {menuItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -43,10 +44,12 @@ const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
                 </Button>
               );
             })}
+            <ThemeToggle />
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center space-x-2">
+            <ThemeToggle />
             <Button
               variant="ghost"
               size="sm"
