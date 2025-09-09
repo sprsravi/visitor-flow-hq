@@ -14,7 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      visitors: {
+        Row: {
+          badge_number: string | null
+          check_in_time: string
+          check_out_time: string | null
+          company: string | null
+          created_at: string
+          department: string | null
+          email: string | null
+          id: string
+          mobile: string | null
+          name: string
+          person_to_meet: string | null
+          photo_url: string | null
+          purpose: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          badge_number?: string | null
+          check_in_time?: string
+          check_out_time?: string | null
+          company?: string | null
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          id?: string
+          mobile?: string | null
+          name: string
+          person_to_meet?: string | null
+          photo_url?: string | null
+          purpose?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          badge_number?: string | null
+          check_in_time?: string
+          check_out_time?: string | null
+          company?: string | null
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          id?: string
+          mobile?: string | null
+          name?: string
+          person_to_meet?: string | null
+          photo_url?: string | null
+          purpose?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

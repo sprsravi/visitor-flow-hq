@@ -4,57 +4,19 @@ import Dashboard from '@/components/Dashboard';
 import CheckInForm from '@/components/CheckInForm';
 import VisitorList from '@/components/VisitorList';
 import Reports from '@/components/Reports';
-import { Visitor, VisitorFormData } from '@/types/visitor';
+import { VisitorFormData } from '@/types/visitor';
+import { useVisitors } from '@/hooks/useVisitors';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [visitors, setVisitors] = useState<Visitor[]>([
-    // Sample data for demonstration
-    {
-      id: '1',
-      name: 'John Smith',
-      email: 'john.smith@techcorp.com',
-      mobile: '+1 (555) 123-4567',
-      company: 'TechCorp Solutions',
-      personToMeet: 'Sarah Johnson',
-      department: 'IT',
-      purpose: 'Business Meeting',
-      checkInTime: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-      status: 'checked-in',
-    },
-    {
-      id: '2',
-      name: 'Emily Davis',
-      email: 'emily.davis@marketinghub.com',
-      mobile: '+1 (555) 987-6543',
-      company: 'Marketing Hub',
-      personToMeet: 'Michael Brown',
-      department: 'Marketing',
-      purpose: 'Consultation',
-      checkInTime: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
-      checkOutTime: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
-      status: 'checked-out',
-    },
-  ]);
+  const { visitors, isLoading, createVisitor, checkOutVisitor } = useVisitors();
 
-  const handleCheckIn = (formData: VisitorFormData) => {
-    const newVisitor: Visitor = {
-      id: Date.now().toString(),
-      ...formData,
-      checkInTime: new Date(),
-      status: 'checked-in',
-    };
-    setVisitors(prev => [newVisitor, ...prev]);
+  const handleCheckIn = async (formData: VisitorFormData) => {
+    await createVisitor(formData);
   };
 
-  const handleCheckOut = (id: string) => {
-    setVisitors(prev =>
-      prev.map(visitor =>
-        visitor.id === id
-          ? { ...visitor, checkOutTime: new Date(), status: 'checked-out' }
-          : visitor
-      )
-    );
+  const handleCheckOut = async (id: string) => {
+    await checkOutVisitor(id);
   };
 
   const renderContent = () => {
