@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Building2, Users, ClipboardList, BarChart3, Menu, X } from 'lucide-react';
+import { Users, ClipboardList, BarChart3, Menu, X } from 'lucide-react';
+import emudhra_logo from '@/assets/emudhra-logo.png';
 
 interface NavigationProps {
   activeTab: string;
@@ -11,7 +12,7 @@ const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Building2 },
+    { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'checkin', label: 'Check In', icon: Users },
     { id: 'visitors', label: 'Visitor List', icon: ClipboardList },
     { id: 'reports', label: 'Reports', icon: BarChart3 },
@@ -21,8 +22,8 @@ const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
     <nav className="bg-card border-b border-border sticky top-0 z-50 backdrop-blur-sm bg-card/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-2">
-            <Building2 className="h-8 w-8 text-primary" />
+          <div className="flex items-center space-x-3">
+            <img src={emudhra_logo} alt="Emudhra Logo" className="h-10 w-auto" />
             <h1 className="text-xl font-bold text-foreground">VisitorHub</h1>
           </div>
 
