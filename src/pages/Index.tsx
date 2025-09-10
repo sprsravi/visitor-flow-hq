@@ -8,8 +8,11 @@ import { VisitorFormData } from '@/types/visitor';
 import { useVisitors } from '@/hooks/useVisitors';
 
 const Index = () => {
+  console.log('Index component rendering');
   const [activeTab, setActiveTab] = useState('dashboard');
   const { visitors, isLoading, createVisitor, checkOutVisitor } = useVisitors();
+  
+  console.log('Visitors data:', { visitors, isLoading, visitorsLength: visitors?.length });
 
   const handleCheckIn = async (formData: VisitorFormData) => {
     await createVisitor(formData);
