@@ -1,7 +1,8 @@
-import { supabase } from "@/integrations/supabase/client";
 import { Visitor, VisitorFormData } from "@/types/visitor";
 
-// Database row shape for public.visitors
+const API_BASE_URL = 'http://your-domain.com/api'; // Change this to your domain
+
+// Database row shape from PHP API
 interface VisitorRow {
   id: string;
   name: string;
@@ -37,12 +38,11 @@ const mapRowToVisitor = (row: VisitorRow): Visitor => ({
 });
 
 export const fetchVisitors = async (): Promise<Visitor[]> => {
-  const { data, error } = await supabase
-    .from("visitors")
-    .select("*")
-    .order("check_in_time", { ascending: false });
-
-  if (error) throw error;
+  const response = await fetch(`${API_BASE_URL}/visitors.php`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch visitors');
+  }
+  const data = await response.json();
   return (data as VisitorRow[]).map(mapRowToVisitor);
 };
 
@@ -58,29 +58,39 @@ export const createVisitorRecord = async (form: VisitorFormData): Promise<Visito
     status: "checked-in" as const,
   };
 
-  const { data, error } = await supabase
-    .from("visitors")
-    .insert(payload)
-    .select("*")
-    .maybeSingle();
+  const response = await fetch(`${API_BASE_URL}/visitors.php`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
 
-  if (error) throw error;
-  if (!data) throw new Error("Failed to create visitor record");
+  if (!response.ok) {
+    throw new Error('Failed to create visitor record');
+  }
+
+  const data = await response.json();
   return mapRowToVisitor(data as VisitorRow);
 };
 
 export const checkOutVisitorRecord = async (id: string): Promise<Visitor> => {
-  const { data, error } = await supabase
-    .from("visitors")
-    .update({
+  const response = await fetch(`${API_BASE_URL}/visitors.php`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ 
+      id,
       check_out_time: new Date().toISOString(),
-      status: "checked-out",
-    })
-    .eq("id", id)
-    .select("*")
-    .maybeSingle();
+      status: "checked-out" 
+    }),
+  });
 
-  if (error) throw error;
-  if (!data) throw new Error("Visitor not found or could not be updated");
+  if (!response.ok) {
+    throw new Error('Failed to check out visitor');
+  }
+
+  const data = await response.json();
   return mapRowToVisitor(data as VisitorRow);
 };
