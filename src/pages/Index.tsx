@@ -38,11 +38,18 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 flex-1">
         {renderContent()}
       </main>
+      <footer className="bg-muted/50 border-t py-4">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-sm text-muted-foreground">
+            © 2024 All rights reserved by IT-Team
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
