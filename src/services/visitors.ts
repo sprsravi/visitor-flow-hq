@@ -1,6 +1,6 @@
 import { Visitor, VisitorFormData } from "@/types/visitor";
 
-const API_BASE_URL = 'http://localhost/visitor-app/backend/api'; // XAMPP localhost URL
+const API_BASE_URL = 'http://192.168.1.10/visitor-app/backend/api'; // XAMPP localhost URL
 
 // Database row shape from PHP API
 interface VisitorRow {
